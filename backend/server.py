@@ -64,6 +64,7 @@ async def get_db():
         yield session  # Give the session to the endpoint
         # After the endpoint finishes, the session is automatically closed
 
+
 # Step 5: Define what our API requests and responses will look like
 # These are called "Pydantic models" or "schemas"
 # They define the structure of data that will be sent to and from the API
@@ -103,9 +104,11 @@ class TodoResponse(TodoBase):
     class Config:
         from_attributes = True
 
+
 # Step 6: Create the FastAPI app
 # This is the main application object - it handles all incoming requests
 app = FastAPI(title="TODO API", description="A simple CRUD API for managing TODO items")
+
 
 # Step 7: Create database tables on startup
 # This automatically creates all tables defined in your SQLAlchemy models
@@ -173,7 +176,8 @@ async def get_todo(todo_id: int, db: AsyncSession = Depends(get_db)):
 
     return todo
 
-# Step 10: 
+
+# Step 10:
 # CREATE: Create a new todo
 @app.post("/todos", response_model=TodoResponse, status_code=201)
 async def create_todo(todo: TodoCreate, db: AsyncSession = Depends(get_db)):
@@ -198,7 +202,8 @@ async def create_todo(todo: TodoCreate, db: AsyncSession = Depends(get_db)):
 
     return db_todo
 
-# Step 11: 
+
+# Step 11:
 # UPDATE: Update an existing todo (PATCH - partial update)
 @app.patch("/todos/{todo_id}", response_model=TodoResponse)
 async def patch_todo(
@@ -230,6 +235,7 @@ async def patch_todo(
 
     return db_todo
 
+
 # Step 12: DELETE: Delete a todo
 @app.delete("/todos/{todo_id}", status_code=204)
 async def delete_todo(todo_id: int, db: AsyncSession = Depends(get_db)):
@@ -250,6 +256,7 @@ async def delete_todo(todo_id: int, db: AsyncSession = Depends(get_db)):
     await db.commit()
 
     return None
+
 
 # Step 13: Serve static files (frontend) in production
 # This must come AFTER all API routes so API routes are matched first
@@ -276,6 +283,7 @@ if os.path.exists(static_dir):
             return FileResponse(index_path)
         raise HTTPException(status_code=404, detail="Frontend not found")
 
+
 # Step 14: Run the server
 # This code only runs if you execute the file directly (not if imported)
 if __name__ == "__main__":
@@ -289,5 +297,3 @@ if __name__ == "__main__":
 # Note: The server will be run in Docker (see Docker Configuration section)
 # If you have Poetry installed locally, you can also run:
 # poetry run uvicorn server:app --reload
-
-
